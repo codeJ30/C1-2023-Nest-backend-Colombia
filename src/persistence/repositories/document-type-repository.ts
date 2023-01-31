@@ -38,17 +38,21 @@ export class DocumentTypeRepository {
   }
 
   findAll(): DocumentTypeEntity[] {
-    throw new Error('This method is not implemented');
+     return this.database;
   }
 
-  findOneById(): DocumentTypeEntity {
-    throw new Error('This method is not implemented');
+  findOneById(id: string): DocumentTypeEntity {
+   const docId = this.database.find((item) => item.id ===id);
+   if(docId) return docId;
+   else throw new NotFoundException(`El usuario con id ${id}, no existe`)
   }
-  findByState(): DocumentTypeEntity[] {
-    throw new Error('This method is not implemented');
+  findByState(state: boolean): DocumentTypeEntity[] {
+     const status = this.database.filter((item) => state == state);
+     return status;
   }
 
-  findByName(): DocumentTypeEntity[] {
-    throw new Error('This method is not implemented');
-  }
+  findByName(name: string): DocumentTypeEntity[] {
+   const userName = this.database.filter((item) => item.name == name);
+   return userName;
+ }
 }
