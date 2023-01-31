@@ -38,21 +38,17 @@ implements DocumentTypeInterface
   }
 
   findAll(): DocumentTypeEntity[] {
-   return this.database;
+    throw new Error('This method is not implemented');
   }
 
-  findOneById(id : string): DocumentTypeEntity {
-    const docId = this.database.find((item) => item.id === id);
-    if(docId) return docId;
-    else throw new NotFoundException(`El Id ${id} No se encuentra en la base de datos`);
+  findOneById(): DocumentTypeEntity {
+    throw new Error('This method is not implemented');
   }
-  findByState(state : boolean): DocumentTypeEntity[] {
-    const status = this.database.filter((item) => item.state == state)
-    return status;
+  findByState(): DocumentTypeEntity[] {
+    throw new Error('This method is not implemented');
   }
 
-  findByName(name: string): DocumentTypeEntity[] {
-    const userName = this.database.filter((item) => item.name == name);
-    return userName;
+  findByName(): DocumentTypeEntity[] {
+    throw new Error('This method is not implemented');
   }
 }
