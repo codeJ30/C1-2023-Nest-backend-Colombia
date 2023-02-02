@@ -18,14 +18,13 @@ export class CustomerService {
     newCustomer.phone = customer.phone;
     newCustomer.password = customer.password;
 
-    return newCustomer;
+    return this.customerRepository.register(newCustomer)
     
    }
 
   findAll():CustomerEntity[]{
     return this.customerRepository.findAll();
   }
-
   newCustomer(customer: NewCustomerDTO): CustomerEntity {
     const customerMap = this.transformData(customer);
     return this.customerRepository.register(customerMap);

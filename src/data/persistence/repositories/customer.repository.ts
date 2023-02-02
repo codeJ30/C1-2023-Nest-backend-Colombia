@@ -3,9 +3,11 @@ import { BaseRepository } from './base/base.repository';
 import { CustomerInterface } from './interfaces/customer-repository.Interface';
 import { Injectable, NotFoundException } from '@nestjs/common';
 @Injectable()
+
 export class CustomerRepository
   extends BaseRepository<CustomerEntity>
   implements CustomerInterface
+  
 {
   register(entity: CustomerEntity): CustomerEntity {
     this.database.push(entity);
