@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { DepositEntity, DepositModel, DepositRepository } from 'src/data';
+import { DepositDto } from 'src/business/dtos';
+import { DepositEntity, DepositRepository } from 'src/data';
+import { AccountRepository } from '../../../data/persistence/repositories/account.repository';
 
 
 @Injectable()
 export class DepositService {
 
-constructor (private readonly depositRepository: DepositRepository){}
+constructor (private readonly depositRepository: DepositRepository,
+             private readonly accountRepository: AccountRepository){}
 
   /**
    * Crear un deposito
@@ -14,12 +17,12 @@ constructor (private readonly depositRepository: DepositRepository){}
    * @return {*}  {DepositEntity}
    * @memberof DepositService
    */
-  createDeposit(deposit: DepositModel): DepositEntity {
+  createNewDeposit(deposit: DepositDto): DepositEntity {
    const newDeposit = new DepositEntity();
    newDeposit.amount = deposit.amount;
+   newDeposit.account = this.accountRepository.findOneById(deposit.account);
    newDeposit.dateTime = Date.now();
-   newDeposit.account = deposit.account;
-
+  
    return this.depositRepository.register(newDeposit);
   
   
@@ -33,7 +36,7 @@ constructor (private readonly depositRepository: DepositRepository){}
    */
   deleteDeposit(depositId: string): void {
     const eliminatedDeposit = this.depositRepository.findOneById(depositId);
-    if(eliminatedDeposit === undefined){
+    if(eliminatedDeposit.deleteAt === undefined){
      this.depositRepository.delete(depositId , true); 
     }else {
       this.depositRepository.delete(depositId , false); 
