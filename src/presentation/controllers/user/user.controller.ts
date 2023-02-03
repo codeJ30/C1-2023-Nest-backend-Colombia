@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put , } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Put , } from '@nestjs/common';
 import { NewCustomerDTO } from '../../../business/dtos/new-customer.dto';
 import { CustomerEntity } from 'src/data/persistence/entities/customer.entity';
 import { CustomerService } from 'src/business/services';
@@ -29,9 +29,10 @@ export class UserController {
         return this.customerService.unsubscribe(customerId);
     }
 
-    @Put(':id')
-    userUpdate(@Param('id', ParseUUIDPipe)id: string,
-    @Body()customer: NewCustomerDTO,
+    @Patch(':id')
+    userUpdate(
+        @Param('id' , ParseUUIDPipe)id: string,
+        @Body()customer: NewCustomerDTO,
     ): CustomerEntity{
     return this.customerService.updatedCustomerData(id, customer);
     }

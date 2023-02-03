@@ -22,11 +22,12 @@ export class AccountService {
     let newUserAccount = new AccountEntity();
     newUserAccount = new AccountEntity();
     newUserAccount.customer = this.customerRepository.findOneById(
-      account.CustomerEntityId,
+      account.CustomerEntity,
     );
     newUserAccount.accountType = this.accountTypeRepository.findOneById(
       account.accountType,
     )
+    newUserAccount.balance = Number(account.balance);
     return newUserAccount;
    }
 

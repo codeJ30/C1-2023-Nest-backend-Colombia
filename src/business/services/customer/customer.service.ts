@@ -18,7 +18,7 @@ export class CustomerService {
     newCustomer.phone = customer.phone;
     newCustomer.password = customer.password;
 
-    return this.customerRepository.register(newCustomer)
+    return newCustomer
     
    }
 
@@ -49,8 +49,7 @@ export class CustomerService {
    * @memberof CustomerService
    */
   updatedCustomerData(id: string, customer: NewCustomerDTO): CustomerEntity {
-    const updateData = this.transformData(customer);
-    return this.customerRepository.update(id , updateData);
+    return this.customerRepository.update(id , this.transformData(customer));
   }
 
   /**

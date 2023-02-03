@@ -15,8 +15,8 @@ createAccount(@Body() account: AccountDTO): AccountEntity {
  }
 
  // Obtener el balance de una cuenta
- @Get('balance/: accoundId')
- getAccountBalance(@Param('accountId' , ParseUUIDPipe) accountId:string): number {
+ @Get('/:accoundId')
+ getAccountBalance(accountId:string): number {
     return this.accountService.getBalance(accountId);
  }
 

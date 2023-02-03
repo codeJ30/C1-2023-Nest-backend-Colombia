@@ -2,7 +2,7 @@ import { IsNumber, IsUUID } from 'class-validator';
 
 export class AccountDTO {
   @IsUUID()
-  CustomerEntityId: string;
+  CustomerEntity: string;
   @IsUUID()
   accountType: string;
   @IsNumber()

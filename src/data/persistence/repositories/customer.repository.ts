@@ -18,6 +18,7 @@ export class CustomerRepository
     const index = this.database.findIndex(
       (item) => item.id === id && (item.deletedAt ?? true) === true,
     );
+    console.log('Item', this.database)
     if (index >= 0) {
       this.database[index] = {
         ...this.database[index],
@@ -55,6 +56,7 @@ export class CustomerRepository
     else 
       throw new NotFoundException(`El ID ${id} no existe en base de datos`);
   }
+  
   findOneByEmailAndPassword(email: string , password: string): boolean {
     const index = this.database.findIndex(
       (item) =>

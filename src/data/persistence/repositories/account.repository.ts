@@ -9,10 +9,13 @@ export class AccountRepository
   implements AccountRepositoryinterface
 {
   
-  register(entity: AccountEntity): AccountEntity {
+   register(entity: AccountEntity): AccountEntity {
     this.database.push(entity);
     return this.database.at(-1) ?? entity;
   }
+
+
+
   update(id: string, entity: AccountEntity): AccountEntity {
     const index = this.database.findIndex(
       (item) => item.id === id && (item.deleteAt ?? true) === true,
@@ -56,7 +59,7 @@ export class AccountRepository
   
   findOneById(id: string): AccountEntity {
      const accountData  = this.database.find(
-      (item) => item.id === id  && (item.deleteAt ?? true) === true,);
+      (item) => item.id === id && typeof item.deleteAt ===undefined,);
        if (accountData) return accountData;
        else throw new NotFoundException(`El usuario con el id ${id} no se encuentra`);
   }
