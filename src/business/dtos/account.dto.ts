@@ -1,10 +1,10 @@
-import { IsNumber, IsUUID } from 'class-validator';
+import { IsNumberString, IsUUID } from 'class-validator';
 
 export class AccountDTO {
   @IsUUID()
   CustomerEntity: string;
   @IsUUID()
   accountType: string;
-  @IsNumber()
+  @IsNumberString()
   balance: number;
 }

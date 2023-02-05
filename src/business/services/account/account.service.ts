@@ -62,7 +62,20 @@ export class AccountService {
    * @memberof AccountService
    */
   addAccountBalance(accountId: string, amount: number) {
-    this.accountRepository.findOneById(accountId).balance += amount;
+    let account = new AccountEntity();
+    account = this.accountRepository.findOneById(accountId);
+    account.balance = Number(account.balance) + Number(amount);
+    this.accountRepository.update(accountId, account);
+    return account.balance;
+    /**
+ * addBalance(accountId: string, amount: number): number {
+    let account = new AccountEntity();
+    account = this.accountRepository.findOneById(accountId);
+    account.balance = Number(account.balance) + Number(amount);
+    this.accountRepository.update(accountId, account);
+    return account.balance;
+  }
+ */
   }
   /**
    * Remover balance de una cuenta

@@ -29,10 +29,10 @@ export class AccountController {
   }
 
   // Agregar balance a la cuenta
-  @Put('add/: accountId')
+  @Put('add/:accountId')
   addAccountBalance(
-    @Param('accountId', ParseUUIDPipe) accountId: string,
-    @Param('amount') amount: number,
+    @Param('accountId') accountId: string,
+    @Body('amount') amount: number,
   ): void {
     this.accountService.addAccountBalance(accountId, amount);
   }
