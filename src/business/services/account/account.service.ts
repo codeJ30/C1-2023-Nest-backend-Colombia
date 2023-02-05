@@ -54,6 +54,10 @@ export class AccountService {
     return this.accountRepository.findOneById(accountId).balance;
   }
 
+  // Obtener cuenta por id
+  getAccountId(customerId: string): AccountEntity[] {
+    return this.accountRepository.findByCustomer(customerId);
+  }
   /**
    * Agregar balance a una cuenta
    *
@@ -67,15 +71,6 @@ export class AccountService {
     account.balance = Number(account.balance) + Number(amount);
     this.accountRepository.update(accountId, account);
     return account.balance;
-    /**
- * addBalance(accountId: string, amount: number): number {
-    let account = new AccountEntity();
-    account = this.accountRepository.findOneById(accountId);
-    account.balance = Number(account.balance) + Number(amount);
-    this.accountRepository.update(accountId, account);
-    return account.balance;
-  }
- */
   }
   /**
    * Remover balance de una cuenta
@@ -157,7 +152,9 @@ export class AccountService {
     accountId: string,
     accountTypeId: string,
   ): AccountTypeEntity {
-    const newChangeAccount = this.accountRepository.findOneById(accountTypeId);
+    const newChangeAccount = this.accountRepository.findOneById(accountId);
+    newChangeAccount.accountType =
+      this.accountTypeRepository.findOneById(accountTypeId);
     return this.accountRepository.update(accountId, newChangeAccount)
       .accountType;
   }

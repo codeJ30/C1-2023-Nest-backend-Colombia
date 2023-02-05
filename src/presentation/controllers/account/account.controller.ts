@@ -28,6 +28,15 @@ export class AccountController {
     return this.accountService.getBalance(accountId);
   }
 
+  // obtener datos de una cuenta por id
+
+  @Get('getAccount/:customerId')
+  getAccountId(
+    @Param('customerId', ParseUUIDPipe) customerId: string,
+  ): AccountEntity[] {
+    return this.accountService.getAccountId(customerId);
+  }
+
   // Agregar balance a la cuenta
   @Put('add/:accountId')
   addAccountBalance(
@@ -40,19 +49,19 @@ export class AccountController {
   // Remover balance de una cuenta
   @Put('remove/:accountId')
   removeAccountBalance(
-    @Param('accounId', ParseUUIDPipe) accountId: string,
-    @Param('amount') amount: number,
+    @Param('accountId', ParseUUIDPipe) accountId: string,
+    @Body() body: { amount: number },
   ): void {
-    this.accountService.removeAccountBalance(accountId, amount);
+    return this.accountService.removeAccountBalance(accountId, body.amount);
   }
 
   // Verificar balance de una cuenta
   @Get('verify/:accountId')
   verifyAccountBalance(
     @Param('accountId', ParseUUIDPipe) accountId: string,
-    @Param('amount') amount: number,
+    @Body() body: { amount: number },
   ): boolean {
-    return this.accountService.verifyAccountBalance(accountId, amount);
+    return this.accountService.verifyAccountBalance(accountId, body.amount);
   }
 
   // Obtener estado de la cuenta
@@ -67,10 +76,10 @@ export class AccountController {
 
   @Put('state/:accountId')
   changeAccountState(
-    @Param('AccountId', ParseUUIDPipe) accountId: string,
-    @Param('state') state: boolean,
+    @Param('accountId', ParseUUIDPipe) accountId: string,
+    @Body() body: { state: boolean },
   ): void {
-    this.accountService.changeAccountState(accountId, state);
+    this.accountService.changeAccountState(accountId, body.state);
   }
 
   //Obtener el tipo de cuenta
@@ -83,13 +92,13 @@ export class AccountController {
   @Put('type/:accountId')
   changeTypeAccount(
     @Param('accountId') accountId: string,
-    @Param('accountTypeId') accountTypeId: string,
+    @Body() body: { accountTypeId: string },
   ): AccountTypeEntity {
-    return this.accountService.changeTypeAccount(accountId, accountTypeId);
+    return this.accountService.changeTypeAccount(accountId, body.accountTypeId);
   }
 
   //Borrar una cuenta
-  @Delete('delete/: accountId')
+  @Delete('delete/:accountId')
   deleteAccount(@Param('accountId') accountId: string): void {
     this.accountService.deleteAccount(accountId);
   }

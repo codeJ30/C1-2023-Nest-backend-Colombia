@@ -3,11 +3,9 @@ import { BaseRepository } from './base/base.repository';
 import { CustomerInterface } from './interfaces/customer-repository.Interface';
 import { Injectable, NotFoundException } from '@nestjs/common';
 @Injectable()
-
 export class CustomerRepository
   extends BaseRepository<CustomerEntity>
   implements CustomerInterface
-  
 {
   register(entity: CustomerEntity): CustomerEntity {
     this.database.push(entity);
@@ -18,7 +16,7 @@ export class CustomerRepository
     const index = this.database.findIndex(
       (item) => item.id === id && (item.deletedAt ?? true) === true,
     );
-    console.log('Item', this.database)
+    console.log('Item', this.database);
     if (index >= 0) {
       this.database[index] = {
         ...this.database[index],
@@ -53,11 +51,10 @@ export class CustomerRepository
       (item) => item.id === id && (item.deletedAt ?? true) === true,
     );
     if (customer) return customer;
-    else 
-      throw new NotFoundException(`El ID ${id} no existe en base de datos`);
+    else throw new NotFoundException(`El ID ${id} no existe en base de datos`);
   }
-  
-  findOneByEmailAndPassword(email: string , password: string): boolean {
+
+  findOneByEmailAndPassword(email: string, password: string): boolean {
     const index = this.database.findIndex(
       (item) =>
         item.email === email &&
@@ -66,7 +63,10 @@ export class CustomerRepository
     );
     return index >= 0 ? true : false;
   }
-  findOneByDocumentTypeAndDocument(documentType: string , document: string ): boolean {
+  findOneByDocumentTypeAndDocument(
+    documentType: string,
+    document: string,
+  ): boolean {
     const index = this.database.findIndex(
       (item) =>
         item.documentType.id === documentType &&
@@ -90,14 +90,10 @@ export class CustomerRepository
     return stState;
   }
   findByFullName(fullName: string): CustomerEntity[] {
-    const fname= this.database.filter(
+    const fname = this.database.filter(
       (item) =>
         item.fullName == fullName && typeof item.deletedAt === 'undefined',
     );
     return fname;
   }
-   
 }
-
- 
-

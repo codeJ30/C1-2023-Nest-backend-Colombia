@@ -1,13 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { AccountDTO } from 'src/business/dtos/account.dto';
 import { NewCustomerDTO } from 'src/business/dtos/new-customer.dto';
-import { CustomerEntity, CustomerRepository, DocumentTypeEntity } from 'src/data';
+import {
+  CustomerEntity,
+  CustomerRepository,
+  DocumentTypeEntity,
+} from 'src/data';
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class CustomerService {
- 
-  constructor(private readonly customerRepository: CustomerRepository) {}
+  constructor(
+    private readonly customerRepository: CustomerRepository,
+    private readonly accountService: AccountService,
+  ) {}
 
-   transformData(customer: NewCustomerDTO):CustomerEntity {
+  transformData(customer: NewCustomerDTO): CustomerEntity {
     const documentType = new DocumentTypeEntity();
     documentType.id = customer.documentTypeId;
     const newCustomer = new CustomerEntity();
@@ -18,16 +26,22 @@ export class CustomerService {
     newCustomer.phone = customer.phone;
     newCustomer.password = customer.password;
 
-    return newCustomer
-    
-   }
+    return newCustomer;
+  }
 
-  findAll():CustomerEntity[]{
+  findAll(): CustomerEntity[] {
     return this.customerRepository.findAll();
   }
+
   newCustomer(customer: NewCustomerDTO): CustomerEntity {
     const customerMap = this.transformData(customer);
-    return this.customerRepository.register(customerMap);
+    const accountDto = new AccountDTO();
+    const newCustomer = this.customerRepository.register(customerMap);
+    accountDto.CustomerEntity = newCustomer.id;
+    accountDto.accountType = '18a639a4-38fd-4feb-b5f4-cb000a158d77';
+    accountDto.balance = 0;
+    this.accountService.createAccount(accountDto);
+    return newCustomer;
   }
   /**
    * Obtener información de un cliente
@@ -37,7 +51,7 @@ export class CustomerService {
    * @memberof CustomerService
    */
   getCustomerData(customerId: string): CustomerEntity {
-    return this.customerRepository.findOneById(customerId)
+    return this.customerRepository.findOneById(customerId);
   }
 
   /**
@@ -49,7 +63,7 @@ export class CustomerService {
    * @memberof CustomerService
    */
   updatedCustomerData(id: string, customer: NewCustomerDTO): CustomerEntity {
-    return this.customerRepository.update(id , this.transformData(customer));
+    return this.customerRepository.update(id, this.transformData(customer));
   }
 
   /**
@@ -60,11 +74,11 @@ export class CustomerService {
    * @memberof CustomerService
    */
   unsubscribe(id: string): boolean {
-   let unsubscribeUser = new CustomerEntity();
-   unsubscribeUser = this.customerRepository.findOneById(id);
-   if(unsubscribeUser.state) {
-    unsubscribeUser.state = false;
-   }
+    let unsubscribeUser = new CustomerEntity();
+    unsubscribeUser = this.customerRepository.findOneById(id);
+    if (unsubscribeUser.state) {
+      unsubscribeUser.state = false;
+    }
     return unsubscribeUser.state;
   }
 }
