@@ -8,21 +8,21 @@ export class AccountTypeRepository
   extends BaseRepository<AccountTypeEntity>
   implements AccountTypeRepositoryInterface
 {
-  constructor(){
-    super()
+  constructor() {
+    super();
     this.database.push(
-    {
-      id: '012e74ef-50ef-4668-abda-7077551acc91',
-      name: 'Ahorros',
-      state: true,
-    },
-    {
-      id: 'c389bb0d-4e79-4e87-849f-3c3662cc59cf',
-      name: 'Corriente',
-      state: true,
-    },
-  );
- }
+      {
+        id: '18a639a4-38fd-4feb-b5f4-cb000a158d77',
+        name: 'Ahorros',
+        state: true,
+      },
+      {
+        id: 'c389bb0d-4e79-4e87-849f-3c3662cc59cf',
+        name: 'Corriente',
+        state: true,
+      },
+    );
+  }
 
   index: number;
   data: AccountTypeEntity;

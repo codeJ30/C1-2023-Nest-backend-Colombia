@@ -4,17 +4,14 @@ import { BaseRepository } from './base/base.repository';
 import { AccountRepositoryinterface } from './interfaces/account-repository.interface';
 
 @Injectable()
-export class AccountRepository 
+export class AccountRepository
   extends BaseRepository<AccountEntity>
   implements AccountRepositoryinterface
 {
-  
-   register(entity: AccountEntity): AccountEntity {
+  register(entity: AccountEntity): AccountEntity {
     this.database.push(entity);
     return this.database.at(-1) ?? entity;
   }
-
-
 
   update(id: string, entity: AccountEntity): AccountEntity {
     const index = this.database.findIndex(
@@ -41,12 +38,9 @@ export class AccountRepository
       this.hardDelete(index);
       this.database.splice(index, 1);
     }
-
-  
   }
   private hardDelete(index: number): void {
-  this.database.splice(index , 1);
-
+    this.database.splice(index, 1);
   }
 
   private softDelete(index: number): void {
@@ -54,16 +48,17 @@ export class AccountRepository
   }
 
   findAll(): AccountEntity[] {
-   return this.database.filter((item) => item.deleteAt === undefined);
-  }
-  
-  findOneById(id: string): AccountEntity {
-     const accountData  = this.database.find(
-      (item) => item.id === id && typeof item.deleteAt ===undefined,);
-       if (accountData) return accountData;
-       else throw new NotFoundException(`El usuario con el id ${id} no se encuentra`);
+    return this.database.filter((item) => item.deleteAt === undefined);
   }
 
+  findOneById(id: string): AccountEntity {
+    const accountData = this.database.find(
+      (item) => item.id === id && (item.deleteAt ?? true) === true,
+    );
+    if (accountData) return accountData;
+    else
+      throw new NotFoundException(`El usuario con el id ${id} no se encuentra`);
+  }
 
   findByState(state: boolean): AccountEntity[] {
     const dataState: AccountEntity[] = [];
@@ -90,6 +85,5 @@ export class AccountRepository
         typeof item.deleteAt === 'undefined',
     );
     return accType;
-  };
-
+  }
 }
