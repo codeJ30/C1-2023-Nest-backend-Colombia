@@ -29,6 +29,10 @@ export class AccountService {
     return newUserAccount;
   }
 
+  findOneById(id: string): AccountEntity {
+    return this.accountRepository.findOneById(id);
+  }
+
   /**
    * Crear una cuenta
    *

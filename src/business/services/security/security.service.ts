@@ -15,9 +15,10 @@ import { CustomerRepository } from 'src/data/persistence/repositories';
 import { AccountService } from '../account/account.service';
 
 // Entities
-import { AccountTypeEntity, CustomerEntity } from 'src/data/persistence/entities';
-
-
+import {
+  AccountTypeEntity,
+  CustomerEntity,
+} from 'src/data/persistence/entities';
 
 @Injectable()
 export class SecurityService {
@@ -68,7 +69,7 @@ export class SecurityService {
         CustomerEntity: customer.id,
         accountType: accountType.id,
         balance: 0,
-        state: true
+        state: true,
       };
 
       const account = this.accountService.createAccount(newAccount);
