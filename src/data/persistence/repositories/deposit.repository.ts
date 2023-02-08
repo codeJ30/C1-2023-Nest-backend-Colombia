@@ -15,7 +15,7 @@ export class DepositRepository
 
   update(id: string, entity: DepositEntity): DepositEntity {
     const index = this.database.findIndex(
-      (item) => item.id === id && (item.deleteAt ?? true) === undefined,
+      (item) => item.id === id && item.deleteAt === undefined,
     );
     if (index >= 0) {
       this.database[index] = {
@@ -30,7 +30,7 @@ export class DepositRepository
   }
 
   delete(id: string, soft?: boolean): void {
-    //
+    
     if (soft || soft === undefined) {
       const index = this.database.findIndex((item) => item.id === id);
       this.softDelete(index);
@@ -44,7 +44,14 @@ export class DepositRepository
     this.database.splice(index, 1);
   }
   softDelete(index: number): void {
-    this.database[index].deleteAt = Date.now();
+    let deleteDeposit = new DepositEntity();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    deleteDeposit = {
+      ...deleteDeposit,
+      ...this.database[index],
+    };
+    deleteDeposit.deleteAt = Date.now();
+    this.update(this.database[index].id, deleteDeposit);
   }
 
   findAll(): DepositEntity[] {
@@ -53,10 +60,15 @@ export class DepositRepository
 
   findOneById(id: string): DepositEntity {
     const customer = this.database.find(
-      (item) => item.id === id && (item.deleteAt ?? true) === undefined,
+      (item) => item.id === id && item.deleteAt === undefined,
     );
-    if (customer) return customer;
-    else throw new NotFoundException(`El ID ${id} no existe en base de datos`);
+
+    if (customer) {
+      console.log(customer.id);
+      return customer
+    } else {
+      throw new NotFoundException(`El ID ${id} no existe en base de datos`);
+    }
   }
   findByAccountId(accountId: string): DepositEntity[] {
     const money = this.database.filter(

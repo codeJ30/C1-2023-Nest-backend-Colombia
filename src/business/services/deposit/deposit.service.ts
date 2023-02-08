@@ -1,10 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DepositDTO } from 'src/business/dtos';
 import { AccountEntity, DepositEntity, DepositRepository } from 'src/data';
 import { DataRangeModel } from 'src/data/models/data-range.model';
 import { PaginationModel } from 'src/data/models/pagination.model';
 import { AccountRepository } from '../../../data/persistence/repositories/account.repository';
-import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class DepositService {
@@ -95,4 +94,22 @@ export class DepositService {
       .slice(start, end);
     return array;
   }
+
+  findAll(): DepositEntity[] {
+    return this.depositRepository.findAll();
+  }
 }
+
+/*const arrayTransfer = this.depositRepository.findByDateRange(accountId, 0, Date.now())
+const arrayTransferReturn: DepositEntity[] = []
+let range = 0
+pagination.size = arrayTransfer.length;
+if (dataRange?.range === undefined) {
+    range = 10
+}
+else {
+    range = dataRange.range
+}
+pagination.numberPages = Math.round(pagination.size / range)
+for (let x = 1 + range * (pagination.actualPage - 1); x < 1 + range +
+*/
