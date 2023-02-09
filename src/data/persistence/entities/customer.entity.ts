@@ -3,7 +3,7 @@ import { DocumentTypeEntity } from './';
 import { CustomerModel } from '../../models';
 
 export class CustomerEntity implements CustomerModel {
-  
+  accountTypeId: string;
   id = uuid();
   documentType: DocumentTypeEntity;
   document: string;
@@ -13,5 +13,5 @@ export class CustomerEntity implements CustomerModel {
   password: string;
   avatarUrl?: string;
   state = true;
-  deletedAt?: number | Date ;
+  deletedAt?: number | Date;
 }

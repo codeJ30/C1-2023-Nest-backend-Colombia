@@ -8,6 +8,7 @@ export class AccountTypeRepository
   extends BaseRepository<AccountTypeEntity>
   implements AccountTypeRepositoryInterface
 {
+  static findOneById: any;
   constructor() {
     super();
     this.database.push(

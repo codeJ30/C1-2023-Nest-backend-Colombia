@@ -6,25 +6,28 @@ import {
 } from '@nestjs/common';
 
 // Models
-import { CustomerModel } from 'src/data/models';
 
 // Repositories
 import { CustomerRepository } from 'src/data/persistence/repositories';
 
 // Services
 import { AccountService } from '../account/account.service';
+import { JwtService } from '@nestjs/jwt';
+import { AccountDTO } from '../../dtos/account.dto';
+import { SignDTO } from '../../dtos/sing.dto';
+import { DocumentTypeRepository } from '../../../data/persistence/repositories/document-type-repository';
+import { NewCustomerDTO } from '../../dtos/new-customer.dto';
 
 // Entities
-import {
-  AccountTypeEntity,
-  CustomerEntity,
-} from 'src/data/persistence/entities';
+import { CustomerEntity } from 'src/data/persistence/entities';
 
 @Injectable()
 export class SecurityService {
   constructor(
     private readonly customerRepository: CustomerRepository,
     private readonly accountService: AccountService,
+    private readonly documentTypeRepository: DocumentTypeRepository,
+    private jwtService: JwtService,
   ) {}
 
   /**
@@ -34,13 +37,16 @@ export class SecurityService {
    * @return {*}  {string}
    * @memberof SecurityService
    */
-  signIn(user: CustomerModel): string {
+  signIn(user: SignDTO) {
     const answer = this.customerRepository.findOneByEmailAndPassword(
       user.email,
       user.password,
     );
-    if (answer) return 'Falta retornar un JWT';
-    else throw new UnauthorizedException('Datos de identificación inválidos');
+    if (answer) {
+      const customer = this.customerRepository.findOneByEmail(user.email);
+      const payload = { email: customer.email, sub: customer.id };
+      return { access_token: this.jwtService.sign(payload) };
+    } else throw new UnauthorizedException('Datos de identificación inválidos');
   }
 
   /**
@@ -50,9 +56,9 @@ export class SecurityService {
    * @return {*}  {string}
    * @memberof SecurityService
    */
-  signUp(user: CustomerModel): string {
+  signUp(user: NewCustomerDTO) {
     const newCustomer = new CustomerEntity();
-    newCustomer.documentType = user.documentType;
+    newCustomer.documentType = this.documentTypeRepository.findOneById();
     newCustomer.document = user.document;
     newCustomer.fullName = user.fullName;
     newCustomer.email = user.email;
@@ -62,20 +68,15 @@ export class SecurityService {
     const customer = this.customerRepository.register(newCustomer);
 
     if (customer) {
-      const accountType = new AccountTypeEntity();
-      accountType.id = 'Falta el ID por defecto del tipo de cuenta';
-      const newAccount = {
-        id: '',
-        CustomerEntity: customer.id,
-        accountType: accountType.id,
-        balance: 0,
-        state: true,
-      };
-
+      const newAccount = new AccountDTO();
+      newAccount.customerId = customer.id;
+      newAccount.accountType = '18a639a4-38fd-4feb-b5f4-cb000a158d77';
       const account = this.accountService.createAccount(newAccount);
 
-      if (account) return 'Falta retornar un JWT';
-      else throw new InternalServerErrorException();
+      if (account) {
+        const payload = { email: customer.email, index: customer.id };
+        return { access_token: this.jwtService.sign(payload) };
+      } else throw new InternalServerErrorException();
     } else throw new InternalServerErrorException();
   }
 
@@ -85,7 +86,8 @@ export class SecurityService {
    * @param {string} JWToken
    * @memberof SecurityService
    */
-  signOut(JWToken: string): void {
-    throw new Error('Method not implemented.');
+  signOut(JWT: string): boolean {
+    if (this.jwtService.verify(JWT)) return true;
+    return false;
   }
 }

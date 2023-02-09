@@ -7,4 +7,5 @@ export class AccountDTO {
   accountType: string;
   @IsNumberString()
   balance: number;
+  customerId: string;
 }

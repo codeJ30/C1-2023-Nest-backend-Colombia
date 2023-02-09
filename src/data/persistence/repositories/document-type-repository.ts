@@ -5,10 +5,9 @@ import { DocumentTypeInterface } from './interfaces/document-type-repository.int
 
 @Injectable()
 export class DocumentTypeRepository
-extends BaseRepository<DocumentTypeEntity>
-implements DocumentTypeInterface
+  extends BaseRepository<DocumentTypeEntity>
+  implements DocumentTypeInterface
 {
- 
   register(entity: DocumentTypeEntity): DocumentTypeEntity {
     this.database.push(entity);
     return this.database.at(-1) ?? entity;

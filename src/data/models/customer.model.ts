@@ -1,6 +1,7 @@
 import { DocumentTypeModel } from './';
 
 export interface CustomerModel {
+  accountTypeId: string;
   id: string;
   documentType: DocumentTypeModel;
   document: string;
