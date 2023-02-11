@@ -4,7 +4,7 @@ export interface TransferModel {
   id: string;
   outcome: AccountModel;
   income: AccountModel;
-  amount: string;
+  amount: number;
   reason: string;
   date_time: Date | number;
   deleteAt?: Date | number;

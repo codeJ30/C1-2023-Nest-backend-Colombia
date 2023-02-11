@@ -15,7 +15,7 @@ export class AccountRepository
 
   update(id: string, entity: AccountEntity): AccountEntity {
     const index = this.database.findIndex(
-      (item) => item.id === id && (item.deleteAt ?? true) === true,
+      (item) => item.id === id && item.deleteAt === undefined,
     );
     if (index >= 0) {
       this.database[index] = {

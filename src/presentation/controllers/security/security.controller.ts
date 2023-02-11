@@ -8,7 +8,7 @@ import { SignDTO } from '../../../business/dtos/sing.dto';
 export class SecurityController {
   constructor(private readonly securityService: SecurityService) {}
 
-  @Post('singUp')
+  @Post('/singUp')
   singUp(@Body() customer: NewCustomerDTO) {
     return this.securityService.signUp(customer);
   }

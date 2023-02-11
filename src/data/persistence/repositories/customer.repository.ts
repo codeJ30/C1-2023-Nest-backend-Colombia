@@ -14,7 +14,7 @@ export class CustomerRepository
 
   update(id: string, entity: CustomerEntity): CustomerEntity {
     const index = this.database.findIndex(
-      (item) => item.id === id && (item.deletedAt ?? true) === true,
+      (item) => item.id === id && item.deletedAt === undefined,
     );
     console.log('Item', this.database);
     if (index >= 0) {
@@ -47,8 +47,9 @@ export class CustomerRepository
   }
 
   findOneById(id: string): CustomerEntity {
+    console.log(id);
     const customer = this.database.find(
-      (item) => item.id === id && (item.deletedAt ?? true) === true,
+      (item) => item.id === id && item.deletedAt === undefined,
     );
     if (customer) return customer;
     else throw new NotFoundException(`El ID ${id} no existe en base de datos`);

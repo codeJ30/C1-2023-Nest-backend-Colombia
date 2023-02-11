@@ -7,10 +7,28 @@ import { AccountRepository } from './data/persistence/repositories/account.repos
 import { DepositController } from './presentation/controllers/deposit/deposit.controller';
 import { DepositService } from './business/services/deposit/deposit.service';
 import { DepositRepository } from './data/persistence/repositories/deposit.repository';
+import { SecurityController } from './presentation/controllers/security/security.controller';
+import { SecurityService } from './business/services/security/security.service';
+import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
+import { DocumentTypeRepository } from './data/persistence/repositories/document-type-repository';
+import { TransferRepository } from './data/persistence/repositories/transfer.repository';
+import { TransferService } from './business/services/transfer/transfer.service';
+import { TransferController } from './presentation/controllers/transfer/transfer.controller';
 
 @Module({
-  imports: [],
-  controllers: [UserController, AccountController, DepositController],
+  imports: [
+    JwtModule.register({
+      secret: 'My key',
+      signOptions: { expiresIn: '24h' },
+    }),
+  ],
+  controllers: [
+    UserController,
+    AccountController,
+    DepositController,
+    SecurityController,
+    TransferController,
+  ],
   providers: [
     DepositService,
     CustomerService,
@@ -18,7 +36,11 @@ import { DepositRepository } from './data/persistence/repositories/deposit.repos
     AccountService,
     AccountRepository,
     AccountTypeRepository,
-    DepositRepository
+    DepositRepository,
+    SecurityService,
+    DocumentTypeRepository,
+    TransferRepository,
+    TransferService,
   ],
 })
 export class AppModule {}

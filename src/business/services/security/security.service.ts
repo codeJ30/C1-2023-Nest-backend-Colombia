@@ -8,7 +8,10 @@ import {
 // Models
 
 // Repositories
-import { CustomerRepository } from 'src/data/persistence/repositories';
+import {
+  AccountTypeRepository,
+  CustomerRepository,
+} from 'src/data/persistence/repositories';
 
 // Services
 import { AccountService } from '../account/account.service';
@@ -20,6 +23,8 @@ import { NewCustomerDTO } from '../../dtos/new-customer.dto';
 
 // Entities
 import { CustomerEntity } from 'src/data/persistence/entities';
+import { DocumentTypeEntity } from '../../../data/persistence/entities/document-type.entity';
+import { AccountTypeEntity } from '../../../data/persistence/entities/account-type.entity';
 
 @Injectable()
 export class SecurityService {
@@ -27,6 +32,7 @@ export class SecurityService {
     private readonly customerRepository: CustomerRepository,
     private readonly accountService: AccountService,
     private readonly documentTypeRepository: DocumentTypeRepository,
+    private readonly accountTypeRepository: AccountTypeRepository,
     private jwtService: JwtService,
   ) {}
 
@@ -58,7 +64,9 @@ export class SecurityService {
    */
   signUp(user: NewCustomerDTO) {
     const newCustomer = new CustomerEntity();
-    newCustomer.documentType = this.documentTypeRepository.findOneById();
+    const docType = new DocumentTypeEntity();
+    docType.id = user.accountTypeId;
+    newCustomer.documentType = docType;
     newCustomer.document = user.document;
     newCustomer.fullName = user.fullName;
     newCustomer.email = user.email;
@@ -70,7 +78,10 @@ export class SecurityService {
     if (customer) {
       const newAccount = new AccountDTO();
       newAccount.customerId = customer.id;
-      newAccount.accountType = '18a639a4-38fd-4feb-b5f4-cb000a158d77';
+      // newAccount.accountType = '18a639a4-38fd-4feb-b5f4-cb000a158d77';
+      const accType = new AccountTypeEntity();
+      const newAccountType = this.accountTypeRepository.register(accType);
+      newAccount.accountType = newAccountType.id;
       const account = this.accountService.createAccount(newAccount);
 
       if (account) {

@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { TransferEntity, TransferModel, TransferRepository } from 'src/data';
+import { TransferEntity, TransferRepository } from 'src/data';
+import { DataRangeModel } from 'src/data/models/data-range.model';
+import { PaginationModel } from 'src/data/models/pagination.model';
+import { TransferDTO } from '../../dtos/transfer.dto';
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class TransferService {
-  constructor(private readonly transferRepository: TransferRepository) {}
+  constructor(
+    private readonly transferRepository: TransferRepository,
+    private readonly accountService: AccountService,
+  ) {}
   /**
    * Crear una transferencia entre cuentas del banco
    *
@@ -11,10 +18,10 @@ export class TransferService {
    * @return {*}  {TransferEntity}
    * @memberof TransferService
    */
-  createTransfer(transfer: TransferModel): TransferEntity {
+  createTransfer(transfer: TransferDTO): TransferEntity {
     const newMovement = new TransferEntity();
-    newMovement.outcome = transfer.outcome;
-    newMovement.income = transfer.income;
+    newMovement.outcome = this.accountService.findOneById(transfer.outcome);
+    newMovement.income = this.accountService.findOneById(transfer.income);
     newMovement.amount = transfer.amount;
     newMovement.reason = transfer.reason;
 
@@ -32,8 +39,8 @@ export class TransferService {
    */
   getHistoryOut(
     accountId: string,
-    // pagination: PaginationModel,
-    //dataRange?: DataRangeModel,
+    pagination: PaginationModel,
+    dataRange?: DataRangeModel,
   ): TransferEntity[] {
     throw new Error('This method is not implemented');
   }
@@ -49,8 +56,8 @@ export class TransferService {
    */
   getHistoryIn(
     accountId: string,
-    //pagination: PaginationModel,
-    //dataRange?: DataRangeModel,
+    pagination: PaginationModel,
+    dataRange?: DataRangeModel,
   ): TransferEntity[] {
     throw new Error('This method is not implemented');
   }
@@ -65,13 +72,34 @@ export class TransferService {
    * @memberof TransferService
    */
   getHistory(
+    actualPage: number,
     accountId: string,
-    //pagination: PaginationModel,
-    //dataRange?: DataRangeModel,
+    pagination: PaginationModel,
+    dataRange?: DataRangeModel,
   ): TransferEntity[] {
-    throw new Error('This method is not implemented');
+    const arrayTransfer = this.transferRepository.findByDataRange(
+      accountId,
+      0,
+      Date.now(),
+    );
+    const arrayTransferReturn: TransferEntity[] = [];
+    let range = 0;
+    pagination.size = arrayTransfer.length;
+    if (dataRange?.range === undefined) {
+      range = 10;
+    } else {
+      range = dataRange.range;
+    }
+    pagination.numberPages = Math.round(pagination.size / range);
+    for (
+      let x = 1 + range * (actualPage - 1);
+      x < 1 + range + range * (actualPage - 1);
+      x++
+    ) {
+      arrayTransferReturn.push(arrayTransfer[x - 1]);
+    }
+    return arrayTransferReturn;
   }
-
   /**
    * Borrar una transacción
    *

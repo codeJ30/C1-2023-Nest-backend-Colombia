@@ -17,15 +17,13 @@ export class AccountService {
   ) {}
 
   accountMapping(account: AccountDTO): AccountEntity {
-    let newUserAccount = new AccountEntity();
-    newUserAccount = new AccountEntity();
+    const newUserAccount = new AccountEntity();
     newUserAccount.customer = this.customerRepository.findOneById(
-      account.CustomerEntity,
+      account.customerId,
     );
     newUserAccount.accountType = this.accountTypeRepository.findOneById(
       account.accountType,
     );
-    newUserAccount.balance = Number(account.balance);
     return newUserAccount;
   }
 
@@ -42,6 +40,7 @@ export class AccountService {
    */
 
   createAccount(account: AccountDTO): AccountEntity {
+    console.log(account);
     const newAccount = this.accountMapping(account);
     return this.accountRepository.register(newAccount);
   }

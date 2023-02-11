@@ -5,7 +5,7 @@ export class AccountEntity implements AccountModel {
   id = uuid();
   customer: CustomerModel;
   accountType: AccountTypeModel;
-  balance: number;
+  balance = 0;
   state = true;
   deleteAt?: number | Date;
   customerId: string;
