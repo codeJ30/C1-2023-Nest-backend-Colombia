@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { TransferEntity, TransferRepository } from 'src/data';
-import { DataRangeModel } from 'src/data/models/data-range.model';
-import { PaginationModel } from 'src/data/models/pagination.model';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { TransferEntity, TransferModel, TransferRepository } from 'src/data';
+//import { DataRangeModel } from 'src/data/models/data-range.model';
+//import { PaginationModel } from 'src/data/models/pagination.model';
 import { TransferDTO } from '../../dtos/transfer.dto';
 import { AccountService } from '../account/account.service';
+import { AccountRepository } from '../../../data/persistence/repositories/account.repository';
+//import { TransferModel } from '../../../../dist/src/data/models/transfer.model';
 
 @Injectable()
 export class TransferService {
   constructor(
     private readonly transferRepository: TransferRepository,
     private readonly accountService: AccountService,
+    private readonly accountRepository: AccountRepository,
   ) {}
   /**
    * Crear una transferencia entre cuentas del banco
@@ -18,25 +21,36 @@ export class TransferService {
    * @return {*}  {TransferEntity}
    * @memberof TransferService
    */
-  createTransfer(transfer: TransferDTO): TransferEntity {
+  createTransfer(transfer: TransferDTO): TransferModel {
     const newMovement = new TransferEntity();
-    newMovement.outcome = this.accountService.findOneById(transfer.outcome);
-    newMovement.income = this.accountService.findOneById(transfer.income);
-    newMovement.amount = transfer.amount;
-    newMovement.reason = transfer.reason;
-
-    return this.transferRepository.register(newMovement);
-  }
-
-  /**
-   * Obtener historial de transacciones de salida de una cuenta
-   *
-   * @param {string} accountId
-   * @param {PaginationModel} pagination
-   * @param {DataRangeModel} [dataRange]
-   * @return {*}  {TransferEntity[]}
-   * @memberof TransferService
-   */
+    const newIncome = this.accountRepository.findOneById(transfer.income);
+    const newOutcome = this.accountRepository.findOneById(transfer.outcome);
+    if (newIncome.balance > Number(transfer.amount)) {
+      newMovement.income = newIncome;
+      newMovement.outcome = newOutcome;
+      newMovement.amount = Number(transfer.amount);
+      newMovement.reason = transfer.reason;
+      newOutcome.balance -= Number(transfer.amount);
+      this.accountRepository.update(newOutcome.id, newOutcome);
+      newIncome.balance += Number(transfer.amount);
+      this.accountRepository.update(newIncome.id, newIncome);
+      newMovement.date_time = Date.now();
+      return this.transferRepository.register(newMovement);
+    } else {
+      throw new NotFoundException(
+        'Transaccion Rechazada, por fondos insufientes',
+      );
+    }
+    /**
+     * Obtener historial de transacciones de salida de una cuenta
+     *
+     * @param {string} accountId
+     * @param {PaginationModel} pagination
+     * @param {DataRangeModel} [dataRange]
+     * @return {*}  {TransferEntity[]}
+     * @memberof TransferService
+     */
+    /*
   getHistoryOut(
     accountId: string,
     pagination: PaginationModel,
@@ -54,6 +68,8 @@ export class TransferService {
    * @return {*}  {TransferEntity[]}
    * @memberof TransferService
    */
+
+    /*
   getHistoryIn(
     accountId: string,
     pagination: PaginationModel,
@@ -71,6 +87,7 @@ export class TransferService {
    * @return {*}  {TransferEntity[]}
    * @memberof TransferService
    */
+    /*
   getHistory(
     actualPage: number,
     accountId: string,
@@ -106,7 +123,10 @@ export class TransferService {
    * @param {string} transferId
    * @memberof TransferService
    */
+    /*
   deleteTransfer(transferId: string): void {
     this.transferRepository.delete(transferId);
+  }
+  */
   }
 }
