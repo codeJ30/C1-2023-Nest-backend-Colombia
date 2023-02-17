@@ -14,6 +14,9 @@ export class NewCustomerDTO {
 
   @IsNumberString()
   document: string;
+  
+  @IsString()
+  documentTypeName: string;
 
   @IsString()
   @MaxLength(500)

@@ -47,7 +47,6 @@ export class CustomerRepository
   }
 
   findOneById(id: string): CustomerEntity {
-    console.log(id);
     const customer = this.database.find(
       (item) => item.id === id && item.deletedAt === undefined,
     );

@@ -10,6 +10,9 @@ import {
 
 @Injectable()
 export class AccountService {
+  findAll(): AccountEntity[] {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly accountTypeRepository: AccountTypeRepository,
@@ -75,6 +78,8 @@ export class AccountService {
     this.accountRepository.update(accountId, account);
     return account.balance;
   }
+
+  
   /**
    * Remover balance de una cuenta
    *

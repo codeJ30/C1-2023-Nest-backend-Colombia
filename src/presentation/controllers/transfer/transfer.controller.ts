@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import { TransferService } from 'src/business/services';
 import { TransferDTO } from '../../../business/dtos/transfer.dto';
 
@@ -12,4 +12,9 @@ export class TransferController {
   createTransfer(@Body() transfer: TransferDTO) {
     return this.transferService.createTransfer(transfer);
   }
+
+  @Get('getTransfer/:id')
+   getTransfer(@Param('id') id: string){
+    return this.transferService.getTransferByIdUser(id);
+   }
 }

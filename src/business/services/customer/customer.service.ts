@@ -18,6 +18,7 @@ export class CustomerService {
   transformData(customer: NewCustomerDTO): CustomerEntity {
     const documentType = new DocumentTypeEntity();
     documentType.id = customer.documentTypeId;
+    documentType.name = customer.documentTypeName;
     const newCustomer = new CustomerEntity();
     newCustomer.documentType = documentType;
     newCustomer.document = customer.document;
@@ -25,13 +26,15 @@ export class CustomerService {
     newCustomer.email = customer.email;
     newCustomer.phone = customer.phone;
     newCustomer.password = customer.password;
+    
+
+    console.log(newCustomer)
+    console.log('doc',documentType)
 
     return newCustomer;
   }
 
-  findAll(): CustomerEntity[] {
-    return this.customerRepository.findAll();
-  }
+
 
   newCustomer(customer: NewCustomerDTO): CustomerEntity {
     const customerMap = this.transformData(customer);
@@ -52,6 +55,10 @@ export class CustomerService {
    */
   getCustomerData(customerId: string): CustomerEntity {
     return this.customerRepository.findOneById(customerId);
+  }
+
+  findAll(): CustomerEntity[] {
+    return this.customerRepository.findAll();
   }
 
   /**

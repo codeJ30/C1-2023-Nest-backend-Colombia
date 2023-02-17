@@ -4,9 +4,11 @@ import { SecurityService } from '../../../business/services/security/security.se
 import { NewCustomerDTO } from '../../../business/dtos/new-customer.dto';
 import { SignDTO } from '../../../business/dtos/sing.dto';
 
+
 @Controller('security')
 export class SecurityController {
   constructor(private readonly securityService: SecurityService) {}
+
 
   @Post('/singUp')
   singUp(@Body() customer: NewCustomerDTO) {
@@ -14,7 +16,7 @@ export class SecurityController {
   }
 
   @Get('logout')
-  logout(@Body() body: { JWT: string }): boolean {
+  logout(@Body()body: { JWT: string }): boolean {
     return this.securityService.signOut(body.JWT);
   }
 

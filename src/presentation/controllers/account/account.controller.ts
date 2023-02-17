@@ -21,7 +21,10 @@ export class AccountController {
   createAccount(@Body() account: AccountDTO): AccountEntity {
     return this.accountService.createAccount(account);
   }
-
+  @Get()
+  findAllUsers(): AccountEntity[] {
+    return this.accountService.findAll();
+  }
   // Obtener el balance de una cuenta
   @Get('balance/:accountId')
   getAccountBalance(@Param('accountId') accountId: string): number {

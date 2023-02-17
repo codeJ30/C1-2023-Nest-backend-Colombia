@@ -31,7 +31,6 @@ export class SecurityService {
   constructor(
     private readonly customerRepository: CustomerRepository,
     private readonly accountService: AccountService,
-    private readonly documentTypeRepository: DocumentTypeRepository,
     private readonly accountTypeRepository: AccountTypeRepository,
     private jwtService: JwtService,
   ) {}

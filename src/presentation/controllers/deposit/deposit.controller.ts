@@ -25,7 +25,7 @@ export class DepositController {
     return this.depositService.findAll();
   }
 
-  @Get('history/:id')
+  @Get('id')
   getHistory(
     @Param('id') id: string,
     @Body() data: { dimension: number; page: number },

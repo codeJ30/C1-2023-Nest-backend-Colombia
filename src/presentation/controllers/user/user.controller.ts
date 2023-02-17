@@ -20,6 +20,7 @@ export class UserController {
   @Get()
   findAllUser(): CustomerEntity[] {
     return this.customerService.findAll();
+   
   }
 
   // Registrar o crear una cuenta
