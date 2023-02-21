@@ -20,7 +20,7 @@ export class SecurityController {
     return this.securityService.signOut(body.JWT);
   }
 
-  @Post('singIn')
+  @Post('signIn')
   singIn(@Body() customer: SignDTO) {
     return this.securityService.signIn(customer);
   }
