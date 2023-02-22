@@ -8,6 +8,22 @@ export class DocumentTypeRepository
   extends BaseRepository<DocumentTypeEntity>
   implements DocumentTypeInterface
 {
+
+  constructor(){
+    super();
+    this.database.push(
+      {
+        id:'73ddaeb0-6dc5-4e62-b2be-8dfe39027546',
+        name:'Cedula De Cuidadania',
+        state: true,
+      },
+      {
+        id:'0bfa4f87-392f-44b1-9517-b0da30cbf18b',
+        name:'Cedula De Extrangeria',
+        state: true,
+      }
+    )
+  }
   register(entity: DocumentTypeEntity): DocumentTypeEntity {
     this.database.push(entity);
     return this.database.at(-1) ?? entity;
@@ -37,17 +53,23 @@ export class DocumentTypeRepository
   }
 
   findAll(): DocumentTypeEntity[] {
-    throw new Error('This method is not implemented');
+   return this.database;
   }
 
-  findOneById(): DocumentTypeEntity {
-    throw new Error('This method is not implemented');
-  }
-  findByState(): DocumentTypeEntity[] {
-    throw new Error('This method is not implemented');
+  findOneById(id: string): DocumentTypeEntity {
+    const userDoc = this.database.find((item)=> item.id === id);
+    if (userDoc) return userDoc;
+   else 
+    throw new NotFoundException(`El tipo de documento con el ${id} no existe en la base de datos`) 
   }
 
-  findByName(): DocumentTypeEntity[] {
-    throw new Error('This method is not implemented');
+  findByState(state: boolean): DocumentTypeEntity[] {
+   const status = this.database.filter((item) => item.state == state);
+   return status;
+  }
+
+  findByName(name : string): DocumentTypeEntity[] {
+   const userName = this.database.filter((item) => item.name == name);
+   return userName;
   }
 }

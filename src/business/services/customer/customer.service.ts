@@ -7,18 +7,18 @@ import {
   DocumentTypeEntity,
 } from 'src/data';
 import { AccountService } from '../account/account.service';
+import { DocumentTypeRepository } from '../../../data/persistence/repositories/document-type-repository';
 
 @Injectable()
 export class CustomerService {
   constructor(
     private readonly customerRepository: CustomerRepository,
     private readonly accountService: AccountService,
+    private readonly documentTypeRepository : DocumentTypeRepository
   ) {}
 
   transformData(customer: NewCustomerDTO): CustomerEntity {
-    const documentType = new DocumentTypeEntity();
-    documentType.id = customer.documentTypeId;
-    documentType.name = customer.documentTypeName;
+    const documentType = this.documentTypeRepository.findOneById(customer.accountTypeId);
     const newCustomer = new CustomerEntity();
     newCustomer.documentType = documentType;
     newCustomer.document = customer.document;
@@ -26,11 +26,7 @@ export class CustomerService {
     newCustomer.email = customer.email;
     newCustomer.phone = customer.phone;
     newCustomer.password = customer.password;
-    
-
-    console.log(newCustomer)
-    console.log('doc',documentType)
-
+  
     return newCustomer;
   }
 
@@ -72,7 +68,7 @@ export class CustomerService {
   updatedCustomerData(id: string, customer: NewCustomerDTO): CustomerEntity {
     return this.customerRepository.update(id, this.transformData(customer));
   }
-
+  
   /**
    * Dar de baja a un cliente en el sistema
    *

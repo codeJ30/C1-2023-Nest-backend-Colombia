@@ -10,9 +10,7 @@ import {
 
 @Injectable()
 export class AccountService {
-  findAll(): AccountEntity[] {
-    throw new Error('Method not implemented.');
-  }
+
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly accountTypeRepository: AccountTypeRepository,
@@ -43,7 +41,6 @@ export class AccountService {
    */
 
   createAccount(account: AccountDTO): AccountEntity {
-    console.log(account);
     const newAccount = this.accountMapping(account);
     return this.accountRepository.register(newAccount);
   }
@@ -58,6 +55,11 @@ export class AccountService {
 
   getBalance(accountId: string): number {
     return this.accountRepository.findOneById(accountId).balance;
+  }
+
+  
+  findAll(): AccountEntity[] {
+    return this.accountRepository.findAll();
   }
 
   // Obtener cuenta por id
@@ -92,7 +94,7 @@ export class AccountService {
     if (this.verifyAccountBalance(accountId, amount)) {
       this.accountRepository.findOneById(accountId).balance -= amount;
     } else {
-      throw new Error('Transsacción interrumida por saldo insuficiente');
+      throw new Error('Transsacción interrumpida por saldo insuficiente');
     }
   }
   /**
