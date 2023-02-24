@@ -1,36 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TransferEntity, TransferModel, TransferRepository } from 'src/data';
-//import { DataRangeModel } from 'src/data/models/data-range.model';
-//import { PaginationModel } from 'src/data/models/pagination.model';
 import { TransferDTO } from '../../dtos/transfer.dto';
-import { AccountService } from '../account/account.service';
 import { AccountRepository } from '../../../data/persistence/repositories/account.repository';
 import { PaginationModel } from 'src/data/models/pagination.model';
 import { DataRangeModel } from 'src/data/models/data-range.model';
-//import { TransferModel } from '../../../../dist/src/data/models/transfer.model';
 import { CustomerService } from '../customer/customer.service';
 
 @Injectable()
 export class TransferService {
-  getTransferByIdUser(id: string){
-    this.customerService.getCustomerData(id);
-    this.transferRepository.findAll()
-  }
-
+ 
   constructor(
     private readonly transferRepository: TransferRepository,
-    private readonly accountService: AccountService,
     private readonly accountRepository: AccountRepository,
     private readonly customerService: CustomerService,
-
   ) {}
   /**
    * Crear una transferencia entre cuentas del banco
    *
    * @param {TransferModel} transfer
-    * @return {*}  {TransferEntity}
-    * @memberof TransferService
+   * @return {*}  {TransferEntity}
+   * @memberof TransferService
    */
   createTransfer(transfer: TransferDTO): TransferModel {
     const newMovement = new TransferEntity();
@@ -53,6 +43,23 @@ export class TransferService {
       );
     }
   }
+  findOneById(id: string) {
+    const transfer = this.transferRepository.findOneById(id);
+    if(transfer){
+      return transfer;
+    }else {
+      throw new NotFoundException('El id de la transferencia no existe')
+    }
+  }
+  
+  findAll() {
+    return this.transferRepository.findAll();
+   } 
+
+   getTransferByIdUser(id: string) {
+    this.customerService.getCustomerData(id);
+    this.transferRepository.findAll();
+  }
   /**
    * Obtener historial de transacciones de salida de una cuenta
    *
@@ -64,27 +71,29 @@ export class TransferService {
    */
 
   getHistoryOut(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     accountId: string,
     pagination: PaginationModel,
     dataRange?: DataRangeModel,
   ): TransferEntity[] {
-   if(dataRange) {
-    const history= this.transferRepository.findOutcomeByDataRange(
-      accountId,
-      dataRange.dateInit ?? 0,
-      dataRange.dateEnd ?? Date.now(),
-    ).filter (
-      (item) => item.outcome.id === accountId &&
-      item.amount > (dataRange.amountInit ?? 0) && 
-      item.amount < (dataRange.amountEnd ?? Number.MAX_SAFE_INTEGER),
-     );
-     return history.slice(
-      pagination.size * pagination.page,
-      pagination.size * pagination.page+ pagination.size,
-     )
-   }
-   return[];
+    const transferArray = this.transferRepository.findOutcomeById(accountId);
+    const getArrayTransfer: TransferEntity[] = [];
+    let range = 0;
+    pagination.size = transferArray.length;
+    if (dataRange?.range === undefined) {
+      range = 10;
+    } else {
+      range = dataRange.range;
+    }
+    pagination.numberPages = Math.round(pagination.size / range);
+    for (
+      let num = 1 + range * (pagination.actualPage! - 1);
+      num < 1 + range + range * (pagination.actualPage! - 1);
+      num++
+    ) {
+      if (num === pagination.size + 1) break;
+      getArrayTransfer.push(transferArray[num - 1]);
+    }
+    return getArrayTransfer;
   }
 
   /**
@@ -102,24 +111,27 @@ export class TransferService {
     pagination: PaginationModel,
     dataRange?: DataRangeModel,
   ): TransferEntity[] {
-    if (dataRange) {
-      const history = this.transferRepository.findIncomeByDataRange(
-       accountId,
-       dataRange.amountInit ?? 0,
-       dataRange.amountEnd ?? Date.now(), 
-      ).filter (
-        (item) => item.income.id === accountId && 
-        item.amount > (dataRange.amountInit ?? 0) &&
-        item.amount < (dataRange.amountEnd ?? Number.MAX_SAFE_INTEGER)
-      );
-      return history.slice(
-        pagination.size * pagination.page,
-        pagination.size * pagination.page + pagination.size
-      )
+    const arrayTransfer = this.transferRepository.findIncomeById(accountId);
+    const getArrayTransfer: TransferEntity[] = [];
+    let range = 0;
+    pagination.size = arrayTransfer.length;
+    if (dataRange?.range === undefined) {
+      range = 10;
+    } else {
+      range = dataRange.range;
     }
-    return[]
+    pagination.numberPages = Math.round(pagination.size / range);
+    for (
+      let num = 1 + range * (pagination.actualPage! - 1);
+      num < 1 + range + range * (pagination.actualPage! - 1);
+      num++
+    ) {
+      if (num === pagination.size + 1) break;
+      getArrayTransfer.push(arrayTransfer[num - 1]);
+    }
+    return getArrayTransfer;
   }
-
+  
   /**
    * Obtener historial de transacciones de una cuenta
    *
@@ -131,33 +143,32 @@ export class TransferService {
    */
 
   getHistory(
-    actualPage: number,
-    accountId: string,
-    pagination: PaginationModel,
+    accountId:string,
+    pagination:PaginationModel,
     dataRange?: DataRangeModel,
-  ): TransferEntity[] {
-    const arrayTransfer = this.transferRepository.findByDataRange(
+  ):TransferEntity[] {
+    const transferArray = this.transferRepository.findByDataRange(
       accountId,
       0,
       Date.now(),
-    );
-    const arrayTransferReturn: TransferEntity[] = [];
-    let range = 0;
-    pagination.size = arrayTransfer.length;
-    if (dataRange?.range === undefined) {
-      range = 10;
-    } else {
-      range = dataRange.range;
-    }
-    pagination.numberPages = Math.round(pagination.size / range);
-    for (
-      let x = 1 + range * (actualPage - 1);
-      x < 1 + range + range * (actualPage - 1);
-      x++
-    ) {
-      arrayTransferReturn.push(arrayTransfer[x - 1]);
-    }
-    return arrayTransferReturn;
+      );
+      const getTransferArray : TransferEntity[] = [];
+      let range = 0 ;
+      pagination.size = transferArray.length;
+      if(dataRange?.range === undefined){
+        range = 10;
+      } else{
+        range= dataRange.range;
+      }
+      pagination.numberPages = Math.round(pagination.size / range);
+      for(
+        let num = 1 + range * (pagination.actualPage - 1);
+        num > 1 + range + range *(pagination.actualPage - 1);
+        num++)
+        {         
+          getTransferArray.push(transferArray[num - 1]);
+        }
+        return getTransferArray;
   }
 
   /**
@@ -168,6 +179,12 @@ export class TransferService {
    */
 
   deleteTransfer(transferId: string): void {
+    const transfer = this.transferRepository.findOneById(transferId);
     this.transferRepository.delete(transferId);
+    if (transfer.deleteAt === undefined) {
+      this.transferRepository.delete(transferId, true);
+    } else {
+      this.transferRepository.delete(transferId, false);
+    }
   }
 }

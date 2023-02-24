@@ -79,14 +79,15 @@ export class DepositRepository
   }
 
   findByDataRange(
+    id: string,
     dateInit: Date | number,
     dateEnd: Date | number,
   ): DepositEntity[] {
     const dateData = this.database.filter(
       (item) =>
-        typeof item.deleteAt === undefined &&
-        item.dateTime >= dateInit &&
-        item.dateTime <= dateEnd,
+       // typeof item.deleteAt === undefined &&
+        item.account.id === id
+      
     );
     if (dateData === undefined)
       throw new NotFoundException(' No se encuentra informacion de usuario');

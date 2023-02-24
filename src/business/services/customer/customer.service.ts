@@ -4,7 +4,6 @@ import { NewCustomerDTO } from 'src/business/dtos/new-customer.dto';
 import {
   CustomerEntity,
   CustomerRepository,
-  DocumentTypeEntity,
 } from 'src/data';
 import { AccountService } from '../account/account.service';
 import { DocumentTypeRepository } from '../../../data/persistence/repositories/document-type-repository';
@@ -36,7 +35,7 @@ export class CustomerService {
     const customerMap = this.transformData(customer);
     const accountDto = new AccountDTO();
     const newCustomer = this.customerRepository.register(customerMap);
-    accountDto.CustomerEntity = newCustomer.id;
+    accountDto.customerId = newCustomer.id;
     accountDto.accountType = '18a639a4-38fd-4feb-b5f4-cb000a158d77';
     accountDto.balance = 0;
     this.accountService.createAccount(accountDto);

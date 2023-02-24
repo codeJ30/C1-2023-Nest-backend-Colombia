@@ -12,6 +12,7 @@ export class SecurityController {
 
   @Post('/singUp')
   singUp(@Body() customer: NewCustomerDTO) {
+    console.log(customer);
     return this.securityService.signUp(customer);
   }
 
@@ -23,5 +24,6 @@ export class SecurityController {
   @Post('signIn')
   singIn(@Body() customer: SignDTO) {
     return this.securityService.signIn(customer);
+  
   }
 }

@@ -40,6 +40,13 @@ export class AccountController {
     return this.accountService.getAccountId(customerId);
   }
 
+  @Get('getAccount/:userId')
+  getUserId(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): AccountEntity[] {
+    return this.accountService.findAllById(userId);
+  }
+
   // Agregar balance a la cuenta
   @Put('add/:accountId')
   addAccountBalance(

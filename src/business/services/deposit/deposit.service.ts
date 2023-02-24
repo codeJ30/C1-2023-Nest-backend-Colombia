@@ -32,7 +32,7 @@ export class DepositService {
     const newDeposit = new DepositEntity();
     newDeposit.account = this.accountRepository.findOneById(deposit.account);
     newDeposit.amount = Number(deposit.amount);
-    newDeposit.dateTime = new Date();
+    newDeposit.dateTime =  Date.now();
     let newAccount = new AccountEntity();
     newAccount = this.accountRepository.findOneById(deposit.account);
     newAccount.balance += Number(deposit.amount);
@@ -69,31 +69,17 @@ export class DepositService {
     pagination: PaginationModel,
     dataRange?: DataRangeModel,
   ): DepositEntity[] {
-    if (dataRange) {
-      const newList = this.depositRepository.findByDataRange(
-        dataRange.dateInit ?? 0,
-        dataRange.dateEnd ?? Date.now(),
-      );
-      const array = newList.filter(
-        (item: { account: { id: string }; amount: number }) =>
-          item.account.id === accountId &&
-          (item.amount >= Number(dataRange.amountInit) ?? 0) &&
-          (item.amount <= Number(dataRange.amountEnd) ?? Number.MAX_VALUE),
-      );
 
-      return array.slice(
-        pagination.dimension * pagination.page,
-        pagination.dimension * pagination.page + pagination.dimension,
-      );
-    }
-    const start = pagination.dimension * pagination.page;
-    const end = start + Number(pagination.dimension);
-    const array = this.depositRepository
-      .findAll()
-      .filter((item) => item.account.id === accountId)
-      .slice(start, end);
-    return array;
-  }
+    const transferArray = this.depositRepository.findByDataRange(
+      accountId,
+      0,
+      Date.now());
+      return transferArray.slice(
+        pagination.actualPage * pagination.numberPages,
+        pagination.actualPage * pagination.numberPages + pagination.numberPages!,
+      )
+      
+      }
 
   findAll(): DepositEntity[] {
     return this.depositRepository.findAll();

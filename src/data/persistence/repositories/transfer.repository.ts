@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { TransferEntity } from '../entities/transfer.entity';
 import { BaseRepository } from './base/base.repository';
 import { Transferinterface } from './interfaces/transfer-repository.interface';
-import { AccountEntity } from '../entities/account.entity';
 
 @Injectable()
 export class TransferRepository
@@ -14,16 +13,13 @@ export class TransferRepository
     dateInit: Date | number,
     dateEnd: Date | number,
   ): TransferEntity[] {
-    const dateData = this.database.filter(
+    const arrayTransfer = this.findAll();
+    return arrayTransfer.filter(
       (item) =>
         item.id === AccountId &&
-        typeof item.deleteAt === undefined &&
         item.date_time >= dateInit &&
         item.date_time <= dateEnd,
     );
-    if (dateData === undefined)
-      throw new NotFoundException(' No se encuentra informacion de usuario');
-    return dateData;
   }
 
   register(entity: TransferEntity): TransferEntity {
@@ -77,35 +73,25 @@ export class TransferRepository
     else throw new NotFoundException(`El ID ${id} no existe en base de datos`);
   }
 
-  findOutcomeByDataRange(
-    accountId: string,
-    dateInit: Date | number,
-    dateEnd: Date | number,
-  ): TransferEntity[] {
-    const range = this.database.filter(
-      (item) =>
-        item.outcome.id === accountId &&
-        typeof item.deleteAt === 'undefined' &&
-        item.date_time >= dateInit &&
-        item.date_time <= dateEnd,
+  findOutcomeById(accountId: string): TransferEntity[] {
+    const transferArray = this.database.filter(
+      (item) => item.outcome.id === accountId,
     );
-    if (range === undefined) throw new NotFoundException();
-    return range;
+    if (transferArray.length > 0) {
+      return transferArray;
+    } else {
+      throw new NotFoundException('Transferencia inexistente');
+    }
   }
 
-  findIncomeByDataRange(
-    accountId: string,
-    dateInit: Date | number,
-    dateEnd: Date | number,
-  ): TransferEntity[] {
-    const inputR = this.database.filter(
-      (item) =>
-        item.outcome.id === accountId &&
-        typeof item.deleteAt === 'undefined' &&
-        item.date_time >= dateInit &&
-        item.date_time <= dateEnd,
+  findIncomeById(accountId: string): TransferEntity[] {
+    const arrayTransfer = this.database.filter(
+      (item) => item.income.id === accountId,
     );
-    if (inputR === undefined) throw new NotFoundException();
-    return inputR;
+    if (arrayTransfer.length > 0) {
+      return arrayTransfer;
+    } else {
+      throw new NotFoundException('Transferencia inexistente');
+    }
   }
 }

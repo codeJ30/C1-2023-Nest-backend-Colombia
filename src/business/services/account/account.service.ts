@@ -62,6 +62,10 @@ export class AccountService {
     return this.accountRepository.findAll();
   }
 
+  findAllById(id: string): AccountEntity[] {
+    return this.accountRepository.findByCustomer(id);
+  }
+
   // Obtener cuenta por id
   getAccountId(customerId: string): AccountEntity[] {
     return this.accountRepository.findByCustomer(customerId);
